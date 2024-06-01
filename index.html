@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Profit & loss Graph Plotter</title>
+  <script src="./lightweight-charts.standalone.production.js"></script>
+  <style>
+    html, body {
+        margin: 0;
+        height: 100%;
+        width: 100%;
+    }
+    body {
+        display: flex;
+    }
+    .main-container {
+        display: block;
+        background: #1c2231;
+        color: white;
+        font-family: sans-serif;
+        flex-grow: 1;
+        padding: 2% 0%;
+    }
+    .graph-container {
+        display: flex;
+        padding: 0% 2%;
+        border-top: 1px solid #505565;
+        padding-top: 10px;
+    }
+    #graph {
+        width: 70%;
+        height: 500px;
+        flex-grow: 1;
+        margin-right: 2%;
+    }
+    .controls {
+        display: flex;
+        flex-direction: column;
+        background: #1c2231;
+    }
+    .controls button {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        margin: 10px 0;
+        padding: 20px 15px;
+        color: white;
+        border: none;
+        cursor: pointer;
+        height: 100%;
+        place-content: center;
+    }
+    #upButton {
+        background-color: #1fbb1f;
+    }
+    #downButton {
+        background-color: #c10909;
+    }
+    svg {
+        margin-bottom: 2px;
+        height: 15px;
+        width: 15px;
+    }
+    .controls div span {
+        display: block;
+    }
+
+    #profit-percentage-value {
+        font-size: 65px;
+        font-weight: 100;
+        text-align: left;
+    }
+    #profit-value {
+        font-weight: bold;
+        font-size: 18px;
+    }
+    #profit {
+        width: 100%;
+        font-size: 18px;
+        text-align: left;
+    }
+    .header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        padding: 0% 2%;
+    }
+    .amount {
+        font-size: 40px;
+        font-weight: bold;
+        color: #1fbb1f;
+    }
+    .currency {
+        background-color: #30384d;
+        width: 150px;
+        font-size: 18px;
+    }
+    .currency-value {
+        padding: 5px;
+    }
+    .strapline {
+        background-color: #374058;
+        width: 100%;
+        height: 4px;
+        margin-top: 3px;
+    }
+    #profit-percentage-value-2 {
+        margin-top: 5px;
+    }
+    input.input-box, textarea {
+        background: #1c2231;
+        color: white;
+        margin: 7px 0px;
+        padding: 5px;
+        border: 1px solid #505565;
+        font-size: 24px;
+    }
+    .amount-header {
+        font-size: 18px;
+        margin-bottom: 5px;
+    }
+    .plus-minus-button {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px; /* 0.75rem */
+        justify-items: center;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    .minus, .plus {
+        background: #242b3e;
+        border-radius: 4px;
+        padding: 4px 0px;
+        color: white;
+        width: 100%;
+        text-align: center;
+        cursor: pointer;
+    }
+  </style>
+</head>
+<body onload="loadCharts()">
+<div class="main-container">
+    <div class="header">
+        <div class="currency">
+            <div class="currency-value">
+                <div>EUR/USD</div>
+                <div id="profit-percentage-value-2">0%</div>
+            </div>
+            <div class="strapline"></div>
+        </div>
+        <div class="amount">
+            $1000.00
+        </div>
+    </div>
+    
+    <div class="graph-container">
+        <div id="graph"></div>
+        <div class="controls">
+            <div>
+                <span class="amount-header">Amount:</span>
+                <input type="text" class="input-box" value="500"/>
+                <div class="plus-minus-button">
+                    <span class="minus">-</span>
+                    <span class="plus">+</span>
+                </div>
+            </div>
+            <div id="profit">
+                <span id="profit-label">Profit/Loss:</span>
+                <span>
+                    <div id="profit-percentage-value" style="color: white;">0%</div>
+                    <div id="profit-value" style="color: white;">$0.00</div>
+                </span>
+            </div>
+            <button id="upButton">
+                <svg fill="#ffffff" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 350 350" xml:space="preserve">
+                    <g>
+                        <g>
+                            <polygon points="40,310 40,0 0,0 0,350 350,350 350,310"/>
+                            <polygon points="218.623,195.004 271.438,119.425 253.165,106.656 322.534,74.229 315.939,150.522 297.668,137.755 227.994,237.459 153.407,194.118 97.979,266.002 72.639,246.461 145.21,152.345"/>
+                        </g>
+                    </g>
+                </svg>
+                Higher
+            </button>
+            <button id="downButton">
+                <svg fill="#ffffff" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 350 350" xml:space="preserve">
+                    <g>
+                        <g>
+                            <polygon points="40,310 40,0 0,0 0,350 350,350 350,310"/>
+                            <polygon points="211.232,145.228 264.046,220.807 245.774,233.575 315.143,266.002 308.548,189.709 290.276,202.477 220.604,102.772 146.016,146.113 90.588,74.229 65.247,93.771 137.819,187.887"/>
+                        </g>
+                    </g>
+                </svg>
+                Lower
+            </button>
+        </div>
+    </div>
+</div>
+<script>
+let chart, lineSeries, markerLineSeries, markerPrice = null, isUp;
+let initialInvestment = 1000;
+let amount;
+let profitElement, profitValueElement, profitLabelElement, profitPercentageValueElement, profitPercentageValueElement2;
+
+function loadCharts() {
+    const chartOptions = {
+        layout: { textColor: 'white', background: { type: 'solid', color: '#242b3e' } },
+        timeScale: { timeVisible: true, secondsVisible: true },
+        grid: {
+            vertLines: {
+                color: 'rgba(255, 255, 255, 0.2)',
+                style: 1,
+                visible: true,
+            },
+            horzLines: {
+                color: 'rgba(255, 255, 255, 0.2)',
+                style: 1,
+                visible: true,
+            }
+        }
+    };
+    chart = LightweightCharts.createChart(document.getElementById('graph'), chartOptions);
+    lineSeries = chart.addLineSeries({ color: '#2962FF' });
+    markerLineSeries = chart.addLineSeries({ color: 'white' });
+
+    const data = [{ value: 48500, time: parseInt(Date.now() / 1000) }];
+    lineSeries.setData(data);
+
+    let preValue = 48499;
+    let _currentValue = 30;
+    let _rnd = 1;
+
+    setInterval(function () {
+        _rnd = Math.floor(Math.random() * 10);
+
+        if (_rnd < 5) {
+            _currentValue = preValue - Math.floor(Math.random() * 3);
+        } else {
+            _currentValue = preValue + Math.floor(Math.random() * 3);
+        }
+
+        lineSeries.update({ value: _currentValue, time: parseInt(Date.now() / 1000) });
+        preValue = _currentValue;
+
+        if (markerPrice !== null) {
+            updateProfitLoss(_currentValue);
+            updateLineColor(_currentValue);
+        } else {
+            profitValueElement.innerText = `$0.00`;
+            profitPercentageValueElement.innerText = `0%`
+            profitPercentageValueElement2.innerText = `0%`
+            profitLabelElement.innerText = 'Profit/Loss:';
+            profitValueElement.style.color = 'white';
+            profitPercentageValueElement.style.color = 'white';
+            profitPercentageValueElement2.style.color = 'white';
+        }
+    }, 1000);
+}
+
+function updateProfitLoss(currentValue) {
+    console.log(amount);
+    // Calculate the absolute profit/loss
+    const profitLoss = isUp ? (currentValue - markerPrice) : (markerPrice - currentValue);
+
+    // Calculate the profit/loss in terms of the initial investment amount
+    const profitLossAmount = (profitLoss / markerPrice) * amount;
+
+    // Calculate the profit/loss percentage relative to the marker price
+    const profitLossPercentage = (profitLoss / markerPrice) * 100;
+
+    // Format the profit/loss value with the sign before the dollar sign
+    const formattedProfitLoss = `${profitLossAmount >= 0 ? '+' : '-'}$${Math.abs(profitLossAmount).toFixed(2)}`;
+
+    profitValueElement.innerText = formattedProfitLoss;
+    profitPercentageValueElement.innerText = `${Math.abs(profitLossPercentage.toFixed(0))}%`;
+    profitPercentageValueElement2.innerText = `${Math.abs(profitLossPercentage.toFixed(0))}%`;
+
+    if (profitLossAmount >= 0) {
+        profitLabelElement.innerText = 'Profit:';
+        profitValueElement.style.color = '#1fbb1f';
+        profitPercentageValueElement.style.color = '#1fbb1f';
+        profitPercentageValueElement2.style.color = '#1fbb1f';
+    } else {
+        profitLabelElement.innerText = 'Loss:';
+        profitValueElement.style.color = '#c10909';
+        profitPercentageValueElement.style.color = '#c10909';
+        profitPercentageValueElement2.style.color = '#c10909';
+    }
+}
+
+function updateLineColor(currentValue) {
+    const lineColor = isUp ? (currentValue >= markerPrice ? '#1fbb1f' : '#c10909') : (currentValue <= markerPrice ? '#1fbb1f' : '#c10909');
+    lineSeries.applyOptions({ color: lineColor });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    profitElement = document.getElementById('profit');
+    profitValueElement = document.getElementById('profit-value');
+    profitLabelElement = document.getElementById('profit-label');
+    const amountInput = document.querySelector('.input-box');
+    profitPercentageValueElement = document.getElementById('profit-percentage-value');
+    profitPercentageValueElement2 = document.getElementById('profit-percentage-value-2');
+    // Function to format the input value with dollar sign
+    const formatInputValue = (value) => {
+        return `$${value}`;
+    };
+        // Function to get numeric value from the formatted input value
+    const getNumericValue = (value) => {
+        return parseInt(value.replace(/[^0-9]/g, ''));
+    };
+  // Set the initial amount based on the input value
+  amount = getNumericValue(amountInput.value);
+
+    const upButton = document.getElementById('upButton');
+    const downButton = document.getElementById('downButton');
+
+    upButton.addEventListener('click', () => {
+        markerPrice = lineSeries.data().slice(-1)[0].value;
+        markerLineSeries.setData([{ value: markerPrice, time: lineSeries.data().slice(-1)[0].time }]);
+        isUp = true;
+    });
+
+    downButton.addEventListener('click', () => {
+        markerPrice = lineSeries.data().slice(-1)[0].value;
+        markerLineSeries.setData([{ value: markerPrice, time: lineSeries.data().slice(-1)[0].time }]);
+        isUp = false;
+    });
+
+    document.querySelector('.plus').addEventListener('click', () => {
+    amount = getNumericValue(amountInput.value) + 100;
+    amountInput.value = formatInputValue(amount);
+});
+
+document.querySelector('.minus').addEventListener('click', () => {
+    amount = Math.max(getNumericValue(amountInput.value) - 100, 1);
+    amountInput.value = formatInputValue(amount);
+});
+
+amountInput.addEventListener('change', () => {
+    amount = getNumericValue(amountInput.value);
+    amountInput.value = formatInputValue(amount);
+});
+
+// Initial format of the input value
+amountInput.value = formatInputValue(amount);
+});
+</script>
+</body>
+</html>
